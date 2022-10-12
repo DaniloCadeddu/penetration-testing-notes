@@ -111,11 +111,26 @@ nc MACHINE_IP PORT
 
 On the *server* system, where you want to open a port and listen on it, you can issue `nc -vnlp PORT`
 
+| Option | Meaning |
 | --- | --- |
+| -l | Listen mode |
+| -p | Specify the Port number |
+| -n | Numeric only; no resolution of hostnames via DNS |
+| -v | Verbose output (optional, yet useful to discover any bugs) |
+| -vv | Very Verbose (optional) |
+| -k | Keep listening after client disconnects |
 
 ### Recap
 
+| Command | Example |
 | --- | --- |
+| ping | ping -c 10 MACHINE_IP on Linux or macOS |
+| ping | ping -n 10 MACHINE_IP on MS Windows |
+| traceroute | traceroute MACHINE_IP on Linux or macOS |
+| tracert | tracert MACHINE_IP on MS Windows |
+| telnet | telnet MACHINE_IP PORT_NUMBER |
+| netcat as client | nc MACHINE_IP PORT_NUMBER |
+| netcat as server | nc -lvnp PORT_NUMBER |
 
 source: [https://tryhackme.com/room/activerecon](https://tryhackme.com/room/activerecon)
 
