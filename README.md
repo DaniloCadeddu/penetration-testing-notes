@@ -17,13 +17,17 @@ In passive reconnaissance, you rely on publicly available knowledge. It is the k
 whois DOMAIN_NAME
 ```
 
+Search for various public information about specific domain
+
 ### Nslookup
 
 ```bash
 nslookup OPTIONS DOMAIN_NAME SERVER
 ```
 
-some query type for nslookup:
+Name Server Look Up. Find an IP address for its domain.
+
+Some query type for nslookup:
 
 | Query Type | Result |
 | --- | --- |
@@ -40,13 +44,17 @@ e.g.
 nslookup -type=A tryhackme.com 1.1.1.1
 ```
 
+Look up only for IPv4 address for [tryhackme.com](http://tryhackme.com) on 1.1.1.1 cloudflare dns server.
+
 ### Dig
 
 ```bash
 dig @SERVER DOMAIN_NAME TYPE
 ```
 
-some query type for dig (note that are the same as nslookup):
+Domain Information Grouper, For more advanced DNS queries.
+
+Some query type for dig (note that are the same as nslookup):
 
 | Query Type | Result |
 | --- | --- |
@@ -91,11 +99,15 @@ Active reconnaissance requires you to make some kind of contact with your target
 ping MACHINE_IP
 ```
 
+ping is a command that sends an ICMP Echo packet to a remote system. If the remote system is online, and the ping packet was correctly routed and not blocked by any firewall, the remote system should send back an ICMP Echo Reply. Similarly, the ping reply should reach the first system if appropriately routed and not blocked by any firewall.
+
 ### Traceroute
 
 ```bash
 traceroute MACHINE_IP
 ```
+
+traceroute command traces the route taken by the packets from your system to another host. The purpose of a traceroute is to find the IP addresses of the routers or hops that a packet traverses as it goes from your system to a target host. This command also reveals the number of routers between the two systems. It is helpful as it indicates the number of hops (routers) between your system and the target host.
 
 ### Telnet
 
@@ -103,11 +115,15 @@ traceroute MACHINE_IP
 telnet MACHINE_IP PORT
 ```
 
+The TELNET (Teletype Network) protocol was developed in 1969 to communicate with a remote system via a command-line interface (CLI). Hence, the command telnet uses the TELNET protocol for remote administration. The default port used by telnet is 23. From a security perspective, telnet sends all the data, including usernames and passwords, in cleartext.
+
 ### Netcat
 
 ```bash
 nc MACHINE_IP PORT
 ```
+
+Netcat or simply nc supports both TCP and UDP protocols. It can function as a client that connects to a listening port; alternatively, it can act as a server that listens on a port of your choice. Hence, it is a convenient tool that you can use as a simple client or server over TCP or UDP.
 
 On the *server* system, where you want to open a port and listen on it, you can issue `nc -vnlp PORT`
 
