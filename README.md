@@ -1,13 +1,19 @@
 # Penetration Testing Notes
 
-# **Reconnaissance**
+---
+
+# Network Security
+
+Networks are subject to attacks from malicious sources. Attacks can be from two categories: “Passive” when a network intruder intercepts data traveling through the network, and “Active” in which an intruder initiates commands to disrupt the network's normal operation or to conduct reconnaissance and lateral movements to find and gain access to assets available via the network.
+
+## Reconnaissance
 
 Reconnaissance (recon) can be defined as a preliminary survey to gather information about a target. It is the first step in [The Unified Kill Chain](https://www.unifiedkillchain.com/) to gain an initial foothold on a system. We divide reconnaissance into:
 
 1. Passive Reconnaissance
 2. Active Reconnaissance
 
-## Passive recon
+**Passive Recon:**
 
 In passive reconnaissance, you rely on publicly available knowledge. It is the knowledge that you can access from publicly available resources without directly engaging with the target. Think of it like you are looking at target territory from afar without stepping foot on that territory.
 
@@ -73,23 +79,9 @@ Some query type for dig (note that are the same as nslookup):
 
 [https://www.shodan.io/](https://www.shodan.io/)
 
-### Recap
-
-| Purpose | Command line example |
-| --- | --- |
-| Lookup WHOIS record | whois tryhackme.com |
-| Lookup DNS A records | nslookup -type=A tryhackme.com |
-| Lookup DNS MX records at DNS server | nslookup -type=MX tryhackme.com 1.1.1.1 |
-| Lookup DNS TXT records | nslookup -type=TXT tryhackme.com |
-| Lookup DNS A records | dig tryhackme.com A |
-| Lookup DNS MX records at DNS server | dig @1.1.1.1 tryhackme.com MX |
-| Lookup DNS TXT records | dig tryhackme.com TXT |
-
-source: [https://tryhackme.com/room/passiverecon](https://tryhackme.com/room/passiverecon)
-
 ---
 
-## Active recon
+**Active Recon:**
 
 Active reconnaissance requires you to make some kind of contact with your target. This contact can be a phone call or a visit to the target company under some pretence to gather more information, usually as part of social engineering. Alternatively, it can be a direct connection to the target system, whether visiting their website or checking if their firewall has an SSH port open. Think of it like you are closely inspecting windows and door locks.
 
@@ -138,6 +130,16 @@ On the *server* system, where you want to open a port and listen on it, you can 
 
 ### Recap
 
+| Purpose | Command line example |
+| --- | --- |
+| Lookup WHOIS record | whois tryhackme.com |
+| Lookup DNS A records | nslookup -type=A tryhackme.com |
+| Lookup DNS MX records at DNS server | nslookup -type=MX tryhackme.com 1.1.1.1 |
+| Lookup DNS TXT records | nslookup -type=TXT tryhackme.com |
+| Lookup DNS A records | dig tryhackme.com A |
+| Lookup DNS MX records at DNS server | dig @1.1.1.1 tryhackme.com MX |
+| Lookup DNS TXT records | dig tryhackme.com TXT |
+
 | Command | Example |
 | --- | --- |
 | ping | ping -c 10 MACHINE_IP on Linux or macOS |
@@ -148,22 +150,65 @@ On the *server* system, where you want to open a port and listen on it, you can 
 | netcat as client | nc MACHINE_IP PORT_NUMBER |
 | netcat as server | nc -lvnp PORT_NUMBER |
 
-source: [https://tryhackme.com/room/activerecon](https://tryhackme.com/room/activerecon)
+source: [https://tryhackme.com/room/activerecon](https://tryhackme.com/room/activerecon), [https://tryhackme.com/room/passiverecon](https://tryhackme.com/room/passiverecon)
 
 ---
 
-# **Scanning**
+## Nmap
 
-// TODO
+When we want to target a network, we want to find an efficient tool to help us handle repetitive tasks and answer the
+    following questions:
 
-# **Vulnerability Assessment**
+1. Which systems are up?
+2. What services are running on these systems?
 
-// TODO
+The tool that we will rely on is Nmap.
 
-# Exploitation
+### Host discovery
 
-// TODO
+```bash
+nmap -sn TARGETS
+```
 
-# **Reporting**
+Discover online hosts without port-scanning (-sn) the live systems.
 
-// TODO
+**Commands example table:**
+
+| Scan Type | Example Command |
+| --- | --- |
+| ARP Scan | sudo nmap -PR -sn MACHINE_IP/24 |
+| ICMP Echo Scan | sudo nmap -PE -sn MACHINE_IP/24 |
+| ICMP Timestamp Scan | sudo nmap -PP -sn MACHINE_IP/24 |
+| ICMP Address Mask Scan | sudo nmap -PM -sn MACHINE_IP/24 |
+| TCP SYN Ping Scan | sudo nmap -PS22,80,443 -sn MACHINE_IP/30 |
+| TCP ACK Ping Scan | sudo nmap -PA22,80,443 -sn MACHINE_IP/30 |
+| UDP Ping Scan | sudo nmap -PU53,161,162 -sn MACHINE_IP/30 |
+
+source: [https://tryhackme.com/room/nmap01](https://tryhackme.com/room/nmap01)
+
+### Basic Port Scans
+
+**Commands example tables:**
+
+Type of scan
+
+| Port Scan Type | Example Command |
+| --- | --- |
+| TCP Connect Scan | nmap -sT MACHINE_IP |
+| TCP SYN Scan | sudo nmap -sS MACHINE_IP |
+| UDP Scan | sudo nmap -sU MACHINE_IP |
+
+Scan options
+
+| Option | Purpose |
+| --- | --- |
+| -p- | all ports |
+| -p1-1023 | scan ports 1 to 1023 |
+| -F | 100 most common ports |
+| -r | scan ports in consecutive order |
+| -T<0-5> | T0 being the slowest and T5 the fastest |
+| --max-rate 50 | rate <= 50 packets/sec |
+| --min-rate 15 | rate >= 15 packets/sec |
+| --min-parallelism 100 | at least 100 probes in parallel |
+
+source: [https://tryhackme.com/room/nmap02](https://tryhackme.com/room/nmap02)
