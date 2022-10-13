@@ -156,8 +156,7 @@ source: [https://tryhackme.com/room/activerecon](https://tryhackme.com/room/acti
 
 ## Nmap
 
-When we want to target a network, we want to find an efficient tool to help us handle repetitive tasks and answer the
-    following questions:
+When we want to target a network, we want to find an efficient tool to help us handle repetitive tasks and answer the following questions:
 
 1. Which systems are up?
 2. What services are running on these systems?
@@ -188,8 +187,6 @@ source: [https://tryhackme.com/room/nmap01](https://tryhackme.com/room/nmap01)
 
 ### Basic Port Scans
 
-**Commands example tables:**
-
 Type of scan
 
 | Port Scan Type | Example Command |
@@ -212,3 +209,90 @@ Scan options
 | --min-parallelism 100 | at least 100 probes in parallel |
 
 source: [https://tryhackme.com/room/nmap02](https://tryhackme.com/room/nmap02)
+
+### Advanced Port Scans
+
+| Port Scan Type | Example Command |
+| --- | --- |
+| TCP Null Scan | sudo nmap -sN MACHINE_IP |
+| TCP FIN Scan | sudo nmap -sF MACHINE_IP |
+| TCP Xmas Scan | sudo nmap -sX MACHINE_IP |
+| TCP Maimon Scan | sudo nmap -sM MACHINE_IP |
+| TCP ACK Scan | sudo nmap -sA MACHINE_IP |
+| TCP Window Scan | sudo nmap -sW MACHINE_IP |
+| Custom TCP Scan | sudo nmap --scanflags URGACKPSHRSTSYNFIN MACHINE_IP |
+| Spoofed Source IP | sudo nmap -S SPOOFED_IP MACHINE_IP |
+| Spoofed MAC Address | --spoof-mac SPOOFED_MAC |
+| Decoy Scan | nmap -D DECOY_IP,ME MACHINE_IP |
+| Idle (Zombie) Scan | sudo nmap -sI ZOMBIE_IP MACHINE_IP |
+| Fragment IP data into 8 bytes | -f |
+| Fragment IP data into 16 bytes | -ff |
+
+source: [https://tryhackme.com/room/nmap03](https://tryhackme.com/room/nmap03)
+
+### Post Port Scans
+
+| Option | Meaning |
+| --- | --- |
+| -sV | determine service/version info on open ports |
+| -sV --version-light | try the most likely probes (2) |
+| -sV --version-all | try all available probes (9) |
+| -O | detect OS |
+| --traceroute | run traceroute to target |
+| --script=SCRIPTS | Nmap scripts to run |
+| -sC or --script=default | run default scripts |
+| -A | equivalent to -sV -O -sC --traceroute |
+| -oN | save output in normal format |
+| -oG | save output in grepable format |
+| -oX | save output in XML format |
+| -oA | save output in normal, XML and Grepable formats |
+
+source: [https://tryhackme.com/room/nmap04](https://tryhackme.com/room/nmap04)
+
+---
+
+## Protocols and Servers
+
+### Telnet
+
+The Telnet protocol is an application layer protocol used to connect to a virtual terminal of another computer. Using Telnet, a user can log into another computer and access its terminal (console) to run programs, start batch processes, and perform system administration tasks remotely.
+
+### HTTP
+
+Hypertext Transfer Protocol (HTTP) is the protocol used to transfer web pages (not only web pages). Your web browser connects to the webserver and uses HTTP to request HTML pages and images among other files and submit forms and upload various files. Anytime you browse the World Wide Web (WWW), you are certainly using the HTTP protocol.
+
+### FTP
+
+File Transfer Protocol (FTP) was developed to make the transfer of files between different computers with different systems efficient.
+
+### SMTP, POP3 and IMAP
+
+Email delivery over the Internet requires the following components:
+
+1. Mail Submission Agent (MSA)
+2. Mail Transfer Agent (MTA)
+3. Mail Delivery Agent (MDA)
+4. Mail User Agent (MUA)
+
+Simple Mail Transfer Protocol (SMTP) is used to communicate with an MTA server.
+
+Post Office Protocol version 3 (POP3) is a protocol used to download the email messages from a Mail Delivery Agent (MDA) server.
+
+Internet Message Access Protocol (IMAP) is more sophisticated than POP3. IMAP makes it possible to keep your email synchronized across multiple devices (and mail clients).
+
+### SSH
+
+Secure Shell (SSH) was created to provide a secure way for remote system administration. In other words, it lets you securely connect to another system over the network and execute commands on the remote system.
+
+### Common ports
+
+| Protocol/Secured Protocol | Default Port / with TLS | Application |
+| --- | --- | --- |
+| FTP / FTPS | 21 / 990 | File Transfer |
+| HTTP / HTTPS | 80 / 443 | Worldwide Web |
+| IMAP / IMAPS | 143 / 993 | Email (MDA) |
+| POP3 / POP3S | 110 / 995 | Email (MDA) |
+| SMTP / SMTPS | 25 / 465 | Email (MTA) |
+| Telnet / N/A | 23 / N/A | Remote Access |
+| SSH | 22 | Secure Remote Access |
+| SFTP | 22 | Secure File Transfer |
